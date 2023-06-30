@@ -1,0 +1,171 @@
+<!-- load static files -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+    <link href="{% static 'css/driver_index.css' %}" rel="stylesheet">
+	<link href="{% static 'bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    
+	<script src="{% static 'jquery/jquery-3.6.3.min.js' %}"></script>
+    <script src="{% static 'jquery/jquery.cookie.js' %}"></script>
+	<script src="{% static 'jquery/jquery.session.js' %}"></script>
+	<script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/driver_index.js' %}"></script>
+</head>
+<body>
+	<!-- navigation bar -->
+	<div class="nav-bar">
+		<div class="container">
+			<div class="row">
+				<!-- index -->
+				<div class="col-1 nav-item" id="nav-index">
+					Riderapp
+				</div>
+				<!-- account -->
+				<div class="col-1 offset-10 nav-item" id="nav-account">
+					Account
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- search -->
+	<div class="container">
+		<div class="ra-item-bar">
+			Search Open Requests
+		</div>
+	</div>
+	<!-- search form -->
+	<div class="container" id="ra-form-search">
+		<form class="row" action="/riderapp/search" method="post">
+			{% csrf_token %}
+			<div class="col-2 ra-form-item">
+				<label for="boarding" class="form-label">From</label>
+				<input type="text" class="form-control" name="boarding" id="address-from">
+			</div>
+
+			<div class="col-2 ra-form-item">
+				<label for="destination" class="form-label">To</label>
+				<input type="text" class="form-control" name="destination" id="address-to">
+			</div>
+
+			<div class="col-5 ra-form-item">
+				<label for="arrival_window" class="form-label">Arrival Window</label>
+				<div class="row">
+					<div class="col-5">
+						<input type="datetime-local" class="form-control" name="startTime" id="startTime">
+					</div>
+					<div class="time-split col-1">~</div>
+					<div class="col-5">
+						<input type="datetime-local" class="form-control" name="endTime" id="endTime">
+					</div>
+				</div>
+			</div>
+
+			<div class="col-2 ra-form-item">
+				<label for="psnumbers" class="form-label">Passenger Number</label>
+				<input type="number" min="1" onkeydown="return event.keyCode !== 69" name="psnumbers" class="form-control" id="psnumbers">
+			</div>
+
+			<div class="col-10 ra-form-item">
+				<button type="button" class="btn btn-dark" id="btn-search-req">Search</button>
+			</div>
+
+			<div class="col-1 ra-form-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input" type="checkbox" id="canShare" name="canshare">
+					<label class="form-check-label" for="canShare">Share</label>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<!-- comfirmed table bar -->
+	<div class="container">
+		<div class="ra-item-bar">
+			Current Comfirmed Requests
+		</div>
+	</div>
+
+	<!-- comfirmed table -->
+	<div class="container" id="ra-confirmed-table">
+		<div class="row">
+			<!-- notice there is no data currently -->
+			{% if not comfirmedRequests %}
+			<div class="notice-message"> Oops! There is no comfirmed requests currently. </div>
+			{% else %}
+			<table class="table">
+				<thead class="table-dark">
+				  <tr>
+					<th scope="col">Boarding</th>
+					<th scope="col">Destination</th>
+					<th scope="col">Arrival Time</th>
+					<th scope="col" class="text-center">Operation</th>
+				  </tr>
+				</thead>
+				<tbody>
+					<!-- one line -->
+					{% for request in comfirmedRequests %}
+					<tr>
+					  <td>{{request.boarding}}</td>
+					  <td>{{request.destination}}</td>
+					  <td>{{request.arrival_time}}</td>
+					  <td>
+						<button type="button" class="btn btn-dark btn-detail" onclick="click_detail_btn('{{request.id}}')">Detail</button>
+					  </td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% endif %}
+		</div>
+	</div>
+  
+  <!-- Modal for address input -->
+    <div class="modal fade" id="address-modal" tabindex="-1" aria-labelledby="address-modal-label" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="address-modal-label">Address</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<!-- State and City-->
+						<div class="mb-3">
+							<div class="row">
+								<div class="col-6">
+									<input type="text" class="form-control" id="address-state" placeholder="State">
+								</div>
+								<div class="col-6">
+									<input type="text" class="form-control" id="address-city" placeholder="City">
+								</div>
+							</div>
+						</div>
+						<!-- Address detail -->
+						<div class="mb-3">
+							<div class="row">
+								<div class="col-12">
+									<input type="text" class="form-control" id="address-detail" placeholder="Address">
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-address-input">Input</button>
+				</div>
+			</div>
+		</div>
+  	</div>
+</body>
+<script type="text/javascript"> 
+	window.CSRF_TOKEN = "{{ csrf_token }}"; 
+	var id = '{{request.session.id}}';
+	var loginType = '{{request.session.loginType}}';
+</script>
+</html>

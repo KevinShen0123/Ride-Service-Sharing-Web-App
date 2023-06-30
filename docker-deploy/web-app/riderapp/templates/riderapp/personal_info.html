@@ -1,0 +1,409 @@
+<!-- load static files -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+    <link href="{% static 'css/personal_info.css' %}" rel="stylesheet">
+	<link href="{% static 'bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    
+	<script src="{% static 'jquery/jquery-3.6.3.min.js' %}"></script>
+    <script src="{% static 'jquery/jquery.cookie.js' %}"></script>
+	<script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/personal_info.js' %}"></script>
+</head>
+<body>
+	<!-- navigation bar -->
+	<div class="nav-bar">
+		<div class="container">
+			<div class="row">
+				<!-- index -->
+				<div class="col-1 nav-item" id="nav-index">
+					Riderapp
+				</div>
+				<!-- account -->
+				<div class="col-1 offset-10 nav-item" id="nav-log-out">
+					Log Out
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- basic personal information card -->
+	<div class="container personal-info-bar">
+		<div class="row">
+			<div class="col-8 offset-2">
+				<div class="card">
+					<h5 class="card-header pinfo-card-header">Basic Information</h5>
+					<div class="card-body">
+						<ul class="list-group list-group-flush">
+							<!-- one line information -->
+							<li class="list-group-item">
+								<div class="row">
+									<div class="col-3 list-item-label">
+										Username
+									</div>
+									<div class="col-7 list-item-value">
+										{{user.username}}
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div class="row">
+									<div class="col-3 list-item-label">
+										Email
+									</div>
+									<div class="col-7 list-item-value">
+										{{user.email}}
+									</div>
+									<div class="col-2 div-btn-modify">
+										<button type="button" class="btn btn-outline-dark btn-sm" id="mf-btn-email">Modify</button>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div class="row">
+									<div class="col-3 list-item-label">
+										Password
+									</div>
+									<div class="col-7 list-item-value">
+										••••••••
+									</div>
+									<div class="col-2 div-btn-modify">
+										<button type="button" class="btn btn-outline-dark btn-sm" id="mf-btn-pwd">Modify</button>
+									</div>
+								</div>
+							</li>
+						  </ul>
+					</div>
+					<div class="card-footer text-muted" id="card-footer-rider">
+						<div class="row">
+							<div class="col-4 offset-4 per-card-footer" id="footer-to-request-history">
+								Request History
+							</div>
+						</div>						
+					</div>
+				  </div>
+			</div>
+		</div>
+	</div>
+
+	{% if vehicle %}
+	<!-- driver information card -->
+	<div class="container personal-info-bar">
+		<div class="row">
+			<div class="col-8 offset-2">
+				<div class="card">
+					<h5 class="card-header pinfo-card-header">Driver Information</h5>
+					<div class="card-body">
+						<ul class="list-group list-group-flush">
+							<!-- one line information -->
+							<li class="list-group-item">
+								<div class="row">
+									<div class="col-3 list-item-label">
+										Name
+									</div>
+									<div class="col-7 list-item-value">
+										{{user.name}}
+									</div>
+									<div class="col-2 div-btn-modify">
+										<button type="button" class="btn btn-outline-dark btn-sm" id="mf-btn-name">Modify</button>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div class="row">
+									<div class="col-3 list-item-label">
+										License Plate number
+									</div>
+									<div class="col-7 list-item-value">
+										{{vehicle.license_plate_number}}
+									</div>
+									<div class="col-2 div-btn-modify">
+										<button type="button" class="btn btn-outline-dark btn-sm" id="mf-btn-lpn">Modify</button>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div class="row">
+									<div class="col-3 list-item-label">
+										Max Passenger Number
+									</div>
+									<div class="col-7 list-item-value">
+										{{vehicle.max_numbers}}
+									</div>
+									<div class="col-2 div-btn-modify">
+										<button type="button" class="btn btn-outline-dark btn-sm" id="mf-btn-mpn">Modify</button>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div class="row">
+									<div class="col-3 list-item-label">
+										Vehicle Type
+									</div>
+									<div class="col-7 list-item-value">
+										{{vehicleType.type}}
+									</div>
+									<div class="col-2 div-btn-modify">
+										<button type="button" class="btn btn-outline-dark btn-sm" id="mf-btn-vtype">Modify</button>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<div class="row">
+									<div class="col-3 list-item-label">
+										Special Vehicle Information
+									</div>
+									<div class="col-7 list-item-value">
+										{% if vehicle.specific %}
+											{{vehicle.specific}}
+										{% else %}
+											Not Specify
+										{% endif %}
+									</div>
+									<div class="col-2 div-btn-modify">
+										<button type="button" class="btn btn-outline-dark btn-sm" id="mf-btn-specific">Modify</button>
+									</div>
+								</div>
+							</li>
+						  </ul>
+					</div>
+					<div class="card-footer text-muted">
+						<div class="row">
+							<div class="col-4 offset-4 per-card-footer" id="footer-driver-history">
+								Complted Request History
+							</div>
+						</div>						
+					</div>
+				  </div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Notification for not being a driver -->
+	<div class="container" id="notification-register">
+		<div class="row">
+			<div class="col-8 offset-2" id="notice-driver">
+				<button type="button" class="btn btn-outline-dark" id="btn-cancel-driver">Stop Being a Driver</button>
+			</div>
+		</div>
+	</div>
+	{% else %}
+	<!-- Notification for being a driver -->
+	<div class="container" id="notification-register">
+		<div class="row">
+			<div class="col-8 offset-2" id="notice-driver">
+				<button type="button" class="btn btn-outline-dark" id="btn-register-driver">Want to be a driver? Register now!</button>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	<!-- Modal for driver registration form -->
+  	<div class="modal fade" id="register2Driver" tabindex="-1" aria-labelledby="register2DriverLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+	  		<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="register2DriverLabel">Driver Registration</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- name -->
+					<div class="mb-3">
+						<input type="text" class="form-control" id="register-name" placeholder="Name">
+					</div>
+					<!-- license plate number -->
+					<div class="mb-3">
+						<input type="text" class="form-control" id="register-license-num" placeholder="License Plate Number">
+					</div>
+					<div class="mb-3">
+						<div class="row">
+							<!-- vehicle type -->
+							<div class="col-6">
+								<div class="input-group mb-3">
+									<label class="input-group-text" for="inputGroupSelect01">Vehicle Type</label>
+									<select class="form-select" id="register-vehicle-type">
+										<option value="1" selected>SUV</option>
+										<option value="2">Hatchback</option>
+										<option value="3">Crossover</option>
+										<option value="4">Convertible</option>
+										<option value="5">Sedan</option>
+										<option value="6">Sports Car</option>
+										<option value="7">Coupe</option>
+										<option value="8">Minivan</option>
+										<option value="9">Station Wagon</option>
+										<option value="10">Pickup Truck</option>
+									</select>
+								</div>
+							</div>
+							<!-- max passenger number -->
+							<div class="col-6">
+								<div class="input-group mb-3">
+									<label class="input-group-text" for="inputGroupSelect01">Max Passenger Number</label>
+									<input type="number" min="1" onkeydown="return event.keyCode !== 69" class="form-control" id="register-max-passenger">
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- specific -->
+					<div class="mb-3">
+						<div class="input-group">
+							<span class="input-group-text">Special Vehicle Information</span>
+							<textarea class="form-control" aria-label="With textarea" id="register-text-specific"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-submit-register">Register</button>
+				</div>
+	 		</div>
+		</div>
+  	</div>
+  
+  	<!-- modal for modify simple value like username, email... -->
+	<div class="modal fade" id="modify-simple-value" tabindex="-1" aria-labelledby="modifySimpleLabel" aria-hidden="true">
+		<div class="modal-dialog">
+	  		<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modifySimpleLabel">New Value</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- new value input -->
+					<div class="mb-3">
+						<input type="text" class="form-control" id="input-modify-simval">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-save-simple">Save changes</button>
+				</div>
+	  		</div>
+		</div>
+  	</div>
+
+	<!-- modal for modify password -->
+	<div class="modal fade" id="modify-password" tabindex="-1" aria-labelledby="modifyPasswordLabel" aria-hidden="true">
+		<div class="modal-dialog">
+	  		<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modifyPasswordLabel">Change Password</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- old password -->
+					<div class="input-group mb-3">
+						<span class="input-group-text">Old Password</span>
+						<input type="password" class="form-control" id="input-old-pwd">
+					</div>
+					<!-- new password -->
+					<div class="input-group mb-3">
+						<span class="input-group-text">New Password</span>
+						<input type="password" class="form-control" id="input-new-pwd">
+					</div>
+					<!-- retype -->
+					<div class="input-group mb-3">
+						<span class="input-group-text">Retype Password</span>
+						<input type="password" class="form-control" id="input-retype-pwd">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-submit-pwd">Submit</button>
+				</div>
+	  		</div>
+		</div>
+  	</div>
+
+	<!-- modal for modify max passenger number -->
+	<div class="modal fade" id="modify-max-passnumber" tabindex="-1" aria-labelledby="modifyMaxPassnumberLabel" aria-hidden="true">
+		<div class="modal-dialog">
+	  		<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modifyMaxPassnumberLabel">New Value</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- new value input -->
+					<div class="input-group mb-3">
+						<label class="input-group-text" for="inputGroupSelect01">Max Passenger Number</label>
+						<input type="number" min="1" onkeydown="return event.keyCode !== 69" class="form-control" id="modify-max-passenger">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-save-mpn">Save changes</button>
+				</div>
+	  		</div>
+		</div>
+  	</div>
+
+	<!-- modal for modify vehicle type -->
+	<div class="modal fade" id="modify-vehicle-type" tabindex="-1" aria-labelledby="modifyVehicleTypeLabel" aria-hidden="true">
+		<div class="modal-dialog">
+	  		<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modifyVehicleTypeLabel">New Value</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- new value input -->
+					<div class="input-group mb-3">
+						<label class="input-group-text" for="inputGroupSelect01">Vehicle Type</label>
+						<select class="form-select" id="modify-vehicle-type">
+							<option value="1" selected>SUV</option>
+							<option value="2">Hatchback</option>
+							<option value="3">Crossover</option>
+							<option value="4">Convertible</option>
+							<option value="5">Sedan</option>
+							<option value="6">Sports Car</option>
+							<option value="7">Coupe</option>
+							<option value="8">Minivan</option>
+							<option value="9">Station Wagon</option>
+							<option value="10">Pickup Truck</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-save-vtype">Save changes</button>
+				</div>
+	  		</div>
+		</div>
+  	</div>
+
+	<!-- modal for modify specific -->
+	<div class="modal fade" id="modify-specific" tabindex="-1" aria-labelledby="modifySpecificLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+	  		<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modifySpecificLabel">New Value</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- new value input -->
+					<div class="mb-3">
+						<div class="input-group">
+							<span class="input-group-text">Special Vehicle Information</span>
+							<textarea class="form-control" aria-label="With textarea" id="text-specific"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-save-specific">Save changes</button>
+				</div>
+	  		</div>
+		</div>
+  	</div>
+</body>
+<script>
+	var CSRF_TOKEN = "{{ csrf_token }}";
+	var id = '{{request.session.id}}';
+	var loginType = '{{request.session.loginType}}';
+</script>
+</html>

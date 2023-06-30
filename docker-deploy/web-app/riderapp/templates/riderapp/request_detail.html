@@ -1,0 +1,489 @@
+<!-- load static files -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link href="{% static 'css/request_detail.css' %}" rel="stylesheet">
+	<link href="{% static 'bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    
+	<script src="{% static 'jquery/jquery-3.6.3.min.js' %}"></script>
+    <script src="{% static 'jquery/jquery.cookie.js' %}"></script>
+	<script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+</head>
+<body>
+    <!-- navigation bar -->
+	<div class="nav-bar">
+		<div class="container">
+			<div class="row">
+				<!-- index -->
+				<div class="col-1 nav-item" id="nav-index">
+					Riderapp
+				</div>
+				<!-- account -->
+				<div class="col-1 offset-10 nav-item" id="nav-account">
+					Account
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- request bar -->
+    <div class="container" id="ra-req-bar">
+        <div class="row">
+            <div class="col-2 ra-item-bar">
+                Request Detail
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-dark req-btn-opt" id="btn-request-opt">Not Exist</button>
+            </div>
+            <div class="col-2 offset-6 div-btn-modify">
+                {% if targetRequest.canshare %}
+                <button type="button" class="btn btn-outline-primary" id="btn-change-to-no-share">Stop Sharing</button>
+                {% else %}
+                <button type="button" class="btn btn-outline-primary" id="btn-change-to-share">Start Sharing</button>
+                {% endif %}
+            </div>
+            <!-- only driver can see that button -->
+            {% if targetRequest.driver_id == request.session.id and targetRequest.status == 1 %}
+            <div class="col-2 offset-6">
+                <button type="button" class="btn btn-outline-primary" id="btn-driver-stop-comfirmed">Cancel Comfirmed</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- request information -->
+    <div class="container" id="card-req-detail">
+        <div class="row">
+            <!-- request info -->
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header rd-card-header">Basic Information</h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <!-- one detail info -->
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">Boarding</div>
+                                    <div class="col-7 list-item-value">{{targetRequest.boarding}}</div>
+                                    {% if canModifyBasic == '1' %}
+                                    <div class="col-2 list-item-btn">
+                                        <button type="button" class="btn btn-dark btn-sm" id="btn-modify-boarding">Modify</button>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">Destination</div>
+                                    <div class="col-7 list-item-value">{{targetRequest.destination}}</div>
+                                    {% if canModifyBasic == '1' %}
+                                    <div class="col-2 list-item-btn">
+                                        <button type="button" class="btn btn-dark btn-sm" id="btn-modify-destination">Modify</button>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">Arrival Time</div>
+                                    <div class="col-7 list-item-value">{{targetRequest.arrival_time}}</div>
+                                    {% if canModifyBasic == '1' %}
+                                    <div class="col-2 list-item-btn">
+                                        <button type="button" class="btn btn-dark btn-sm" id="btn-modify-arrival-time">Modify</button>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">Vehicle Type</div>
+                                    <div class="col-7 list-item-value" id="div-vehicle-type">
+                                        {% if targetRequest.vehicle_tid == 1 %}
+                                            SUV
+                                        {% elif targetRequest.vehicle_tid == 2 %}
+                                            Hatchback
+                                        {% elif targetRequest.vehicle_tid == 3 %}
+                                            Crossover
+                                        {% elif targetRequest.vehicle_tid == 4 %}
+                                            Convertible
+                                        {% elif targetRequest.vehicle_tid == 5 %}
+                                            Sedan
+                                        {% elif targetRequest.vehicle_tid == 6 %}
+                                            Sports Car
+                                        {% elif targetRequest.vehicle_tid == 7 %}
+                                            Coupe
+                                        {% elif targetRequest.vehicle_tid == 8 %}
+                                            Minivan
+                                        {% elif targetRequest.vehicle_tid == 9 %}
+                                            Station Wagon
+                                        {% elif targetRequest.vehicle_tid == 10 %}
+                                            Pickup Truck
+                                        {% else %}
+                                            Not Specified
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-2 list-item-btn div-btn-modify">
+                                        <button type="button" class="btn btn-dark btn-sm" id="btn-modify-vehicle-tid">Modify</button>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">Special Requests</div>
+                                    <div class="col-7 list-item-value">
+                                        {% if targetRequest.specific %}
+                                            {{targetRequest.specific}}
+                                        {% else %}
+                                            Not Specified
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-2 list-item-btn div-btn-modify">
+                                        <button type="button" class="btn btn-dark btn-sm" id="btn-modify-specific">Modify</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- rider information table bar -->
+	<div class="container">
+		<div class="ra-item-bar">
+			Rider Information
+		</div>
+	</div>
+
+	<!-- rider information table -->
+	<div class="container" id="ra-rider-info-table">
+		<div class="row">
+			<table class="table">
+				<thead class="table-dark">
+				  <tr>
+					<th scope="col" class="text-center">Username</th>
+					<th scope="col" class="text-center">Party Number</th>
+					<th scope="col">Operation</th>
+				  </tr>
+				</thead>
+				<tbody class="table-body-rider-info">
+					<!-- owner information -->
+					<tr>
+					  <td class="text-center">{{owner.username}}</td>
+					  <td class="text-center">{{targetRequest.psnumbers}}</td>
+					  <td>
+                        <div class="row">
+                            {% if owner.id == request.session.id and targetRequest.status == 0 %}
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-success div-btn-modify" onclick="modifyPartyNumber()">Modify</button>
+                                </div>
+                            {% endif %}
+                        </div>
+					  </td>
+					</tr>
+                    <!-- sharers information -->
+                    {% for sharer in sharers %}
+                        {% for share_id in share_ids %}
+                        {% if forloop.counter == forloop.parentloop.counter %}
+                            <tr>
+                                <td class="text-center">{{sharer.username}}</td>
+                                <td class="text-center">{{share_id.party_number}}</td>
+                                <td>
+                                    <div class="row">
+                                        {% if targetRequest.status == 0 and share_id.user_id == request.session.id or targetRequest.status == 0 and owner.id == request.session.id %}
+                                        <div class="col-2">
+                                            <button type="button" class="btn btn-danger div-btn-modify" onclick="deleteRider('{{share_id.user_id}}', '{{targetRequest.id}}')">Delete</button>
+                                        </div>
+                                        {% endif %}
+                                        {% if targetRequest.status == 0 and share_id.user_id == request.session.id %}
+                                            <div class="col-2">
+                                                <button type="button" class="btn btn-success div-btn-modify" onclick="modifyPartyNumber()">Modify</button>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% endfor %}
+                     {% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+    {% if driver %}
+    <!-- driver info card -->
+    <div class="container" id="card-req-driver">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header rd-card-header">Driver</h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <!-- one username info -->
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">Name</div>
+                                    <div class="col-7 list-item-value">{{driver.name}}</div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">Vehicle</div>
+                                    <div class="col-7 list-item-value">{{vehicleType.type}}</div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">License Plate Number</div>
+                                    <div class="col-7 list-item-value">{{vehicle.license_plate_number}}</div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">Max Passenger Number</div>
+                                    <div class="col-7 list-item-value">{{vehicle.max_numbers}}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- update history card -->
+    <div class="container" id="card-req-history">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header rd-card-header">History</h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for action in history %}
+                            <!-- one username info -->
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-3 list-item-label">{{action.0}}</div>
+                                    <div class="col-7 list-item-value">{{action.1}} {{action.2}} that request.</div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Modals for modify buttons -->
+  
+    <!-- Modal for address input -->
+    <div class="modal fade" id="address-modal" tabindex="-1" aria-labelledby="address-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="address-modal-label">Address</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- State and City-->
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="address-state" placeholder="State">
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="address-city" placeholder="City">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Address detail -->
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="text" class="form-control" id="address-detail" placeholder="Address">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn-address-modify">Modify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for arrival time -->
+    <div class="modal fade" id="arrival-time-modal" tabindex="-1" aria-labelledby="arrival-time-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="arrival-time-modal-label">Arrival Time</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Arrival Time -->
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="datetime-local" class="form-control" id="arrival-time">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn-arrival-time-modify">Modify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for passenger number -->
+    <div class="modal fade" id="passenger-number-modal" tabindex="-1" aria-labelledby="passenger-number-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="passenger-number-label">Party Number</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Arrival Time -->
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="number" min="1" onkeydown="return event.keyCode !== 69" class="form-control" id="passenger-number">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn-passenger-number-modify">Modify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal for modify vehicle type -->
+	<div class="modal fade" id="vehicle-type-modal" tabindex="-1" aria-labelledby="vehicleTypeLabel" aria-hidden="true">
+		<div class="modal-dialog">
+	  		<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="vehicleTypeLabel">New Value</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- new value input -->
+					<div class="input-group mb-3">
+						<label class="input-group-text" for="inputGroupSelect01">Vehicle Type</label>
+						<select class="form-select" id="select-vehicle-type">
+                            <option value="0" selected>Not Specify</option>
+							<option value="1" selected>SUV</option>
+                            <option value="2">Hatchback</option>
+                            <option value="3">Crossover</option>
+                            <option value="4">Convertible</option>
+                            <option value="5">Sedan</option>
+                            <option value="6">Sports Car</option>
+                            <option value="7">Coupe</option>
+                            <option value="8">Minivan</option>
+                            <option value="9">Station Wagon</option>
+                            <option value="10">Pickup Truck</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-vtype-modify">Modify</button>
+				</div>
+	  		</div>
+		</div>
+  	</div>
+
+    <!-- Modal for specific -->
+    <div class="modal fade" id="specific-modal" tabindex="-1" aria-labelledby="specific-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="specific-label">Special Requests</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Arrival Time -->
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <textarea class="form-control" aria-label="With textarea" id="text-specific"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-specific-modify">Modify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for party number -->
+    <div class="modal fade" id="party-number-modal" tabindex="-1" aria-labelledby="party-number-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="party-number-label">Party Number</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Arrival Time -->
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="number" min="1" onkeydown="return event.keyCode !== 69" class="form-control" id="party-number">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn-party-number-set">Join</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    var req_id = '{{targetRequest.id}}';
+    var req_status = '{{targetRequest.status}}';
+    var req_owner = '{{targetRequest.owner_id}}';
+    var req_driverId = '{{targetRequest.driver_id}}';
+    var CSRF_TOKEN = "{{ csrf_token }}";
+    var canmodify = "{{canmodify}}";
+    var issharer = "{{issharer}}";
+
+    var myRole = '{{request.session.role}}';
+    var myId = '{{request.session.id}}' ;
+    var id = '{{request.session.id}}' ;
+    var loginType = '{{request.session.loginType}}';
+</script>
+<script src="{% static 'js/request_detail.js' %}"></script>
+</html>

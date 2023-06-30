@@ -1,0 +1,58 @@
+.nav-bar{
+    height: 60px;
+    background-color: rgb(55, 63, 63);
+}
+
+.nav-item{
+    text-align: center;
+    height: 60px;
+    line-height: 60px;
+    font-weight: 600;
+    color: aliceblue;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#nav-log-out{
+    cursor: pointer;
+}
+
+.personal-info-bar{
+    margin-top: 20px;
+}
+
+.list-item-label{
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: gray!important;
+}
+
+.list-item-value {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.pinfo-card-header{
+    color: white!important;
+    font-weight: 700;
+    background-color: #212529!important;
+}
+
+.per-card-footer{
+    text-align: center;
+    cursor: pointer;
+}
+
+#notification-register{
+    margin-top: 20px;
+    border-top: 1px solid rgb(218,220,224);
+    padding-top: 20px;
+}
+
+#notice-driver{
+    text-align: center;
+}
+
+#card-footer-rider{
+    display: none;
+}

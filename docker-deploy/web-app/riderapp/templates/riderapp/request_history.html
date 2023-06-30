@@ -1,0 +1,79 @@
+<!-- load static files -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link href="{% static 'css/request_history.css' %}" rel="stylesheet">
+	<link href="{% static 'bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    
+	<script src="{% static 'jquery/jquery-3.6.3.min.js' %}"></script>
+    <script src="{% static 'jquery/jquery.cookie.js' %}"></script>
+	<script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/request_history.js' %}"></script>
+</head>
+<body>
+	<!-- navigation bar -->
+	<div class="nav-bar">
+		<div class="container">
+			<div class="row">
+				<!-- index -->
+				<div class="col-1 nav-item" id="nav-index">
+					Riderapp
+				</div>
+				<!-- account -->
+				<div class="col-1 offset-10 nav-item" id="nav-account">
+					Account
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- request history table bar -->
+	<div class="container">
+		<div class="ra-item-bar">
+			Request History
+		</div>
+	</div>
+
+    <!-- request history table -->
+	<div class="container" id="ra-history-table">
+		<div class="row">
+			<!-- notice there is no data currently -->
+			{% if not history %}
+			<div class="notice-message"> Oops! There is no request history currently. </div>
+			{% else %}
+			<table class="table">
+				<thead class="table-dark">
+				  <tr>
+					<th scope="col">Boarding</th>
+					<th scope="col">Destination</th>
+					<th scope="col">Arrival Time</th>
+					<th scope="col" class="text-center">Operation</th>
+				  </tr>
+				</thead>
+				<tbody>
+					<!-- one line -->
+					{% for request in history %}
+					<tr>
+					  <td>{{request.boarding}}</td>
+					  <td>{{request.destination}}</td>
+					  <td>{{request.arrival_time}}</td>
+					  <td>
+						<button type="button" class="btn btn-dark btn-detail" onclick="click_detail_btn('{{request.id}}')">Detail</button>
+					  </td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% endif %}
+		</div>
+	</div>
+</body>
+<script>
+	var id = '{{request.session.id}}';
+	var loginType = '{{request.session.loginType}}';
+</script>
+</html>

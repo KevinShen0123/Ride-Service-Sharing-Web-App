@@ -1,0 +1,312 @@
+<!-- load static files -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+    <link href="{% static 'css/rider_index.css' %}" rel="stylesheet">
+	<link href="{% static 'bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    
+	<script src="{% static 'jquery/jquery-3.6.3.min.js' %}"></script>
+    <script src="{% static 'jquery/jquery.cookie.js' %}"></script>
+	<script src="{% static 'jquery/jquery.session.js' %}"></script>
+	<script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/rider_index.js' %}"></script>
+</head>
+<body>
+	<!-- navigation bar -->
+	<div class="nav-bar">
+		<div class="container">
+			<div class="row">
+				<!-- index -->
+				<div class="col-1 nav-item" id="nav-index">
+					Riderapp
+				</div>
+				<!-- account -->
+				<div class="col-1 offset-10 nav-item" id="nav-account">
+					Account
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- search -->
+	<div class="container">
+		<div class="ra-item-bar">
+			Search Open Requests
+		</div>
+	</div>
+	<!-- search form -->
+	<div class="container" id="ra-form-search">
+		<form class="row" action="/riderapp/search" method="post">
+			{% csrf_token %}
+			<div class="col-2 ra-form-item">
+				<label for="boarding" class="form-label">From</label>
+				<input type="text" class="form-control" name="boarding" id="address-from">
+			</div>
+
+			<div class="col-2 ra-form-item">
+				<label for="destination" class="form-label">To</label>
+				<input type="text" class="form-control" name="destination" id="address-to">
+			</div>
+
+			<div class="col-5 ra-form-item">
+				<label for="arrival_window" class="form-label">Arrival Window</label>
+				<div class="row">
+					<div class="col-5">
+						<input type="datetime-local" class="form-control" name="startTime" id="startTime">
+					</div>
+					<div class="time-split col-1">~</div>
+					<div class="col-5">
+						<input type="datetime-local" class="form-control" name="endTime" id="endTime">
+					</div>
+				</div>
+			</div>
+
+			<div class="col-2 ra-form-item">
+				<label for="psnumbers" class="form-label">Passenger Number</label>
+				<input type="number" min="1" onkeydown="return event.keyCode !== 69" class="form-control" name="psnumbers" id="psnumbers">
+			</div>
+
+			<div class="col-11 ra-form-item">
+				<button type="button" class="btn btn-dark" id="btn-search-req">Search</button>
+			</div>
+		</form>
+	</div>
+
+	<!-- unfinished table bar -->
+	<div class="container" id="unfinished-table-bar">
+		<div class="row">
+			<div class="col-3">
+				<div>
+					Unfinished Requests
+				</div>
+			</div>
+			<!-- new request button -->
+			<div class="col-2 offset-7">
+				<button type="button" class="btn btn-dark" id="btn-new-request">New Request</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- unfinished table -->
+	<div class="container" id="ra-confirmed-table">
+		<div class="row">
+			<!-- notice there is no data currently -->
+			{% if not owner_requests and not sharer_requests %}
+			<div class="notice-message"> Oops! There is no unfinished requests currently. </div>
+			{% else %}
+			<table class="table">
+				<thead class="table-dark">
+				  <tr>
+					<th scope="col">Boarding</th>
+					<th scope="col">Destination</th>
+					<th scope="col">Arrival Time</th>
+					<th scope="col" class="text-center">Operation</th>
+				  </tr>
+				</thead>
+				<tbody>
+					<!-- owner unfinished requests -->
+					{% for request in owner_requests %}
+					<tr>
+					  <td>{{request.boarding}}</td>
+					  <td>{{request.destination}}</td>
+					  <td>{{request.arrival_time}}</td>
+					  <td>
+						<button type="button" class="btn btn-dark btn-detail" onclick="click_detail_btn('{{request.id}}')">Detail</button>
+					  </td>
+					</tr>
+					{% endfor %}
+					<!-- sharer unfinished requests -->
+					{% for request in sharer_requests %}
+					<tr>
+					  <td>{{request.boarding}}</td>
+					  <td>{{request.destination}}</td>
+					  <td>{{request.arrival_time}}</td>
+					  <td>
+						<button type="button" class="btn btn-dark btn-detail" onclick="click_detail_btn('{{request.id}}')">Detail</button>
+					  </td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% endif %}
+		</div>
+	</div>
+  
+  <!-- Modal for address input -->
+    <div class="modal fade" id="address-modal" tabindex="-1" aria-labelledby="address-modal-label" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="address-modal-label">Address</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<!-- State and City-->
+						<div class="mb-3">
+							<div class="row">
+								<div class="col-6">
+									<input type="text" class="form-control" id="address-state" placeholder="State">
+								</div>
+								<div class="col-6">
+									<input type="text" class="form-control" id="address-city" placeholder="City">
+								</div>
+							</div>
+						</div>
+						<!-- Address detail -->
+						<div class="mb-3">
+							<div class="row">
+								<div class="col-12">
+									<input type="text" class="form-control" id="address-detail" placeholder="Address">
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-address-input">Input</button>
+				</div>
+			</div>
+		</div>
+  	</div>
+
+	<!-- modal for new request -->
+	<div class="modal fade" id="new-request" tabindex="-1" aria-labelledby="new-request-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="new-request-label">New Request</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Boarding -->
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="new-request-label">
+									Boarding
+								</div>
+								<div class="col-4">
+									<input type="text" class="form-control" id="input-boarding-state" placeholder="State">
+								</div>
+								<div class="col-4">
+									<input type="text" class="form-control" id="input-boarding-city" placeholder="City">
+								</div>
+								<div class="col-4">
+									<input type="text" class="form-control" id="input-boarding-address" placeholder="Address">
+								</div>
+                            </div>
+                        </div>
+						<!-- Destination -->
+						<div class="mb-3">
+                            <div class="row">
+                                <div class="new-request-label">
+									Destination
+								</div>
+								<div class="col-4">
+									<input type="text" class="form-control" id="input-destination-state" placeholder="State">
+								</div>
+								<div class="col-4">
+									<input type="text" class="form-control" id="input-destination-city" placeholder="City">
+								</div>
+								<div class="col-4">
+									<input type="text" class="form-control" id="input-destination-address" placeholder="Address">
+								</div>
+                            </div>
+                        </div>
+						<div class="mb-3">
+							<div class="row">
+								<!-- Arrival Time -->
+								<div class="col-6">
+									<div class="row">
+										<div class="new-request-label">
+											Arrival Time
+										</div>
+										<div>
+											<input type="datetime-local" class="form-control" name="arrivalTime" id="arrivalTime">
+										</div>
+									</div>
+								</div>
+								<!-- Passenger Number -->
+								<div class="col-6">
+									<div class="row">
+										<div class="new-request-label">
+											Passenger Number
+										</div>
+										<div>
+											<input type="number" min="1" onkeydown="return event.keyCode !== 69" class="form-control" id="passenger-number">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-3">
+                            <div class="row">
+								<div class="col-6">
+									<!-- Vehicle Type -->
+									<div class="new-request-label">
+										Vehicle Type
+									</div>
+									<div>
+										<select class="form-select" id="vehicle-type">
+											<option value="0" selected>Not Specify</option>
+											<option value="1">SUV</option>
+											<option value="2">Hatchback</option>
+											<option value="3">Crossover</option>
+											<option value="4">Convertible</option>
+											<option value="5">Sedan</option>
+											<option value="6">Sports Car</option>
+											<option value="7">Coupe</option>
+											<option value="8">Minivan</option>
+											<option value="9">Station Wagon</option>
+											<option value="10">Pickup Truck</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-6">
+									<!-- Allow Share -->
+									<div class="new-request-label">
+										Allow Share
+									</div>
+									<div>
+										<select class="form-select" id="allow-share">
+											<option value="0">False</option>
+											<option value="1" selected>True</option>
+										</select>
+									</div>
+								</div>
+
+                            </div>
+                        </div>
+						<!-- Special Specific -->
+						<div class="mb-3">
+							<div class="row">
+								<div class="new-request-label">
+									Special Requests
+								</div>
+								<div>
+									<textarea class="form-control" aria-label="With textarea" id="specific"></textarea>
+								</div>
+							</div>
+						</div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn-submit-request">Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript"> 
+	var CSRF_TOKEN = "{{ csrf_token }}";
+	var id = '{{request.session.id}}';
+	var loginType = '{{request.session.loginType}}';
+</script>
+</html>
